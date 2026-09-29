@@ -323,9 +323,159 @@ Lidがなめらかに動く
 
 ## STEP 02：Add Present
 
-箱の中身と、そのアニメーションを追加します。
+### このSTEPでやること
 
-手順は後ほど追加します。
+箱の中へPresentを追加します。箱を開くとPresentが上へ出て、閉じると箱の中へ戻るようにします。
+
+STEP 01で使った`opened`、`useRef`、`useFrame`、`lerp`を再利用します。新しいstateは追加しません。
+
+```text
+1つのopened state
+├─ Lidの目標位置を決める
+└─ Presentの目標位置を決める
+```
+
+### このSTEPで使うもの
+
+- `sphereGeometry`：Presentの形を作る
+- `useRef`：Presentの`mesh`を参照する
+- `opened`：LidとPresentで同じ開閉状態を使う
+- `useFrame`と`lerp`：Presentを目標位置へ少しずつ近づける
+
+---
+
+### 1. Presentを追加する
+
+#### 1. やること
+
+球体のPresentを1つ追加します。
+
+最初は追加したことを確認しやすいように、箱の上へ一時的に表示します。
+
+#### 2. 追加・変更するコード
+
+`GiftBox`内のBodyとLidの間へ、次の`mesh`を追加します。
+
+```tsx
+{/* Present */}
+<mesh name="Present" position={[0, 2.2, 0]} castShadow>
+  <sphereGeometry args={[0.45, 32, 32]} />
+  <meshStandardMaterial color="#f4c542" />
+</mesh>
+```
+
+#### 3. コードの意味
+
+`sphereGeometry`で半径`0.45`の球体を作ります。
+
+箱と区別しやすいように、Presentは黄色にしています。
+
+`position`のY座標`2.2`は、確認用の一時的な位置です。次の手順で箱の中へ移動します。
+
+#### 4. ブラウザで確認
+
+1. 箱の上に黄色い球体が表示されることを確認します。
+2. Presentが新しい`mesh`として追加されたことを確認します。
+
+この時点では、Presentはまだ動かなくてOKです。
+
+---
+
+### 2. Presentをopenedと連動させる
+
+#### 1. やること
+
+STEP 01でLidに行った処理を、Presentにも追加します。
+
+同じ`opened`を使い、箱を開くとPresentが出て、閉じると箱の中へ戻るようにします。
+
+#### 2. 追加・変更するコード
+
+Lidの位置を表す定数の下へ、Presentの位置を追加します。
+
+```tsx
+const PRESENT_CLOSED_Y = 0.8;
+const PRESENT_OPEN_Y = 2.2;
+```
+
+`GiftBox`内で、`lidRef`の下にPresent用の`ref`を追加します。
+
+```tsx
+const presentRef = useRef<THREE.Mesh>(null);
+```
+
+既存の`useFrame`を次のように変更します。
+
+```tsx
+useFrame(() => {
+  if (!lidRef.current || !presentRef.current) return;
+
+  const lidTargetY = opened ? OPEN_Y : CLOSED_Y;
+  const presentTargetY = opened ? PRESENT_OPEN_Y : PRESENT_CLOSED_Y;
+
+  lidRef.current.position.y = THREE.MathUtils.lerp(
+    lidRef.current.position.y,
+    lidTargetY,
+    0.1,
+  );
+
+  presentRef.current.position.y = THREE.MathUtils.lerp(
+    presentRef.current.position.y,
+    presentTargetY,
+    0.1,
+  );
+});
+```
+
+最後に、先ほど追加したPresentの`mesh`へ`ref`を渡し、最初の位置を箱の中へ変更します。
+
+```tsx
+{/* Present */}
+<mesh
+  ref={presentRef}
+  name="Present"
+  position={[0, PRESENT_CLOSED_Y, 0]}
+  castShadow
+>
+  <sphereGeometry args={[0.45, 32, 32]} />
+  <meshStandardMaterial color="#f4c542" />
+</mesh>
+```
+
+#### 3. コードの意味
+
+`presentRef`を使うと、Presentの`mesh`を参照できます。
+
+LidとPresentは、どちらも同じ`opened`から目標位置を決めています。新しいstateは必要ありません。
+
+`presentTargetY`がPresentの目標位置です。`lerp`を使い、現在のY座標から目標のY座標へ少しずつ近づけます。
+
+#### 4. ブラウザで確認
+
+1. 最初はPresentが箱の中に隠れていることを確認します。
+2. 箱をクリックします。
+3. Lidが開き、Presentが上方向へ出てくることを確認します。
+4. Bodyが動いていないことを確認します。
+5. もう一度クリックします。
+6. LidとPresentが元の位置へ戻ることを確認します。
+
+これで`02-add-present`は完成です。
+
+### このSTEPで体験したこと
+
+STEP 01で使った仕組みを、Presentにも再利用しました。
+
+```text
+クリック
+↓
+1つのopened stateが変わる
+↓
+LidとPresent、それぞれの目標位置が変わる
+↓
+2つのオブジェクトが連動して動く
+```
+
+**1つのstateを使って、複数の3Dオブジェクトを連動させることができます。**
 
 ---
 

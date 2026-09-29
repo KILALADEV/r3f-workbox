@@ -4,19 +4,29 @@ import * as THREE from 'three';
 
 const CLOSED_Y = 1.65;
 const OPEN_Y = 3;
+const PRESENT_CLOSED_Y = 0.8;
+const PRESENT_OPEN_Y = 2.2;
 
 function GiftBox() {
   const [opened, setOpened] = useState(false);
   const lidRef = useRef<THREE.Mesh>(null);
+  const presentRef = useRef<THREE.Mesh>(null);
 
   useFrame(() => {
-    if (!lidRef.current) return;
+    if (!lidRef.current || !presentRef.current) return;
 
-    const targetY = opened ? OPEN_Y : CLOSED_Y;
+    const lidTargetY = opened ? OPEN_Y : CLOSED_Y;
+    const presentTargetY = opened ? PRESENT_OPEN_Y : PRESENT_CLOSED_Y;
 
     lidRef.current.position.y = THREE.MathUtils.lerp(
       lidRef.current.position.y,
-      targetY,
+      lidTargetY,
+      0.1,
+    );
+
+    presentRef.current.position.y = THREE.MathUtils.lerp(
+      presentRef.current.position.y,
+      presentTargetY,
       0.1,
     );
   });
@@ -27,6 +37,17 @@ function GiftBox() {
       <mesh name="Body" position={[0, 0.75, 0]} castShadow>
         <boxGeometry args={[2, 1.5, 2]} />
         <meshStandardMaterial color="#d95763" />
+      </mesh>
+
+      {/* Present */}
+      <mesh
+        ref={presentRef}
+        name="Present"
+        position={[0, PRESENT_CLOSED_Y, 0]}
+        castShadow
+      >
+        <sphereGeometry args={[0.45, 32, 32]} />
+        <meshStandardMaterial color="#f4c542" />
       </mesh>
 
       {/* Lid */}

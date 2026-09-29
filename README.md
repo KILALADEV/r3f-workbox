@@ -1,8 +1,8 @@
-# React Three Fiber ハンズオン：01-click-open
+# React Three Fiber ハンズオン：02-add-present
 
 React Three Fiber（R3F）を使って、クリックすると開くギフトボックスを作るハンズオン教材です。
 
-このSTEPでは、クリックをきっかけにReactのstateを変更し、ギフトボックスのLidをなめらかに開閉します。
+このSTEPでは、STEP 01で作った開閉の仕組みを再利用し、箱の中からPresentが出てくるアニメーションを追加します。
 
 ## 必要な環境
 
@@ -37,10 +37,11 @@ npm run dev
 - R3FのGeometryで作ったギフトボックス
   - Body：箱本体
   - Lid：箱の蓋
+  - Present：箱の中身
 - クリックによる開閉状態の切り替え
-- Lidの開閉アニメーション
+- LidとPresentのアニメーション
 
-BodyとLidは別々のオブジェクトです。箱をクリックすると、Bodyは動かず、Lidだけが上方向へ動きます。もう一度クリックすると閉じます。
+箱をクリックすると、Bodyは動かず、LidとPresentが上方向へ動きます。もう一度クリックすると、どちらも元の位置へ戻ります。
 
 ## 主に編集するファイル
 
