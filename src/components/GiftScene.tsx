@@ -1,8 +1,28 @@
-import { Canvas } from '@react-three/fiber';
+import { useRef, useState } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+
+const CLOSED_Y = 1.65;
+const OPEN_Y = 3;
 
 function GiftBox() {
+  const [opened, setOpened] = useState(false);
+  const lidRef = useRef<THREE.Mesh>(null);
+
+  useFrame(() => {
+    if (!lidRef.current) return;
+
+    const targetY = opened ? OPEN_Y : CLOSED_Y;
+
+    lidRef.current.position.y = THREE.MathUtils.lerp(
+      lidRef.current.position.y,
+      targetY,
+      0.1,
+    );
+  });
+
   return (
-    <group>
+    <group onClick={() => setOpened(!opened)}>
       {/* Body */}
       <mesh name="Body" position={[0, 0.75, 0]} castShadow>
         <boxGeometry args={[2, 1.5, 2]} />
@@ -10,7 +30,12 @@ function GiftBox() {
       </mesh>
 
       {/* Lid */}
-      <mesh name="Lid" position={[0, 1.65, 0]} castShadow>
+      <mesh
+        ref={lidRef}
+        name="Lid"
+        position={[0, CLOSED_Y, 0]}
+        castShadow
+      >
         <boxGeometry args={[2.2, 0.3, 2.2]} />
         <meshStandardMaterial color="#b83b4b" />
       </mesh>
