@@ -16,7 +16,7 @@
 bonus-customize
 ```
 
-この資料はSTEPごとに追記していきます。今回は`01-click-open`を進めます。
+この資料では、STEPごとにコードを追加しながらギフトボックスを完成させていきます。
 
 ---
 
@@ -481,9 +481,190 @@ LidとPresent、それぞれの目標位置が変わる
 
 ## STEP 03：Replace with GLB
 
-Geometryで作った箱をGLBモデルへ差し替え、同じ開閉ロジックを適用します。
+### このSTEPでやること
 
-手順は後ほど追加します。
+Geometryで作ったBodyとLidを、Blenderで作ったGLBモデルへ差し替えます。
+
+見た目は大きく変わりますが、`opened`、`useFrame`、`lerp`を使った開閉の仕組みはそのまま再利用します。PresentもSTEP 02のGeometryを残します。
+
+```text
+Geometryで作ったBody / Lid
+↓
+Blenderで作ったGLB
+```
+
+### このSTEPで使うもの
+
+- `useGLTF`：GLBを読み込む
+- `nodes.Lid`：GLB内のLidを取得する
+- `primitive`：読み込んだ3DモデルをR3Fのシーンへ表示する
+
+今回使用するGLBは、すでに`public/models/gift_box_handson.glb`へ配置されています。
+
+---
+
+### 1. GLBを読み込む
+
+#### 1. やること
+
+`useGLTF`を使って、GLBを`GiftBox`コンポーネントへ読み込みます。
+
+#### 2. 追加・変更するコード
+
+ファイルの先頭に`useGLTF`のimportを追加します。
+
+```tsx
+import { useGLTF } from '@react-three/drei';
+```
+
+`GiftBox`関数の先頭に、次のコードを追加します。
+
+```tsx
+const { scene, nodes } = useGLTF('/models/gift_box_handson.glb');
+```
+
+#### 3. コードの意味
+
+`useGLTF`は、指定したパスからGLBを読み込みます。
+
+`scene`にはGLB全体が入ります。`nodes`からは、GLB内の名前付きノードを取得できます。
+
+#### 4. ブラウザで確認
+
+この時点では、表示はまだGeometry版のままです。ブラウザにエラーが出ていなければ成功です。
+
+---
+
+### 2. Geometry版の箱をGLBへ差し替える
+
+#### 1. やること
+
+Geometry版のBodyとLidを削除し、読み込んだGLB全体を表示します。
+
+Presentの`mesh`は削除しません。
+
+#### 2. 追加・変更するコード
+
+`GiftBox`内から、Bodyの`mesh`を削除します。
+
+```tsx
+{/* Body */}
+<mesh name="Body" position={[0, 0.75, 0]} castShadow>
+  <boxGeometry args={[2, 1.5, 2]} />
+  <meshStandardMaterial color="#d95763" />
+</mesh>
+```
+
+同じように、Geometry版のLidの`mesh`も削除します。
+
+Bodyがあった位置へ、次のコードを追加します。
+
+```tsx
+<primitive object={scene} />
+```
+
+#### 3. コードの意味
+
+`primitive`を使うと、読み込んだGLB全体をR3Fのシーンへ表示できます。
+
+GLBにはBodyとLidが含まれています。Presentは含まれていないため、STEP 02の`sphereGeometry`をそのまま使います。
+
+#### 4. ブラウザで確認
+
+1. Geometry版の箱がGLBモデルへ変わったことを確認します。
+2. 蓋にリボンと結び目が表示されていることを確認します。
+3. Presentの`mesh`がコードに残っていることを確認します。
+
+この時点では、GLBの表示だけを確認します。
+
+Lidの開閉処理はまだGeometry版のLidを参照しているため、次の手順でGLBのLidへつなぎ直します。
+
+---
+
+### 3. GLBのLidに開閉ロジックを適用する
+
+#### 1. やること
+
+GLB内のLidを取得し、STEP 01から使っている開閉ロジックを適用します。
+
+#### 2. 追加・変更するコード
+
+`useGLTF`の下で、Lidを取得します。
+
+```text
+gift_box_handson.glb
+└─ GiftBox
+   ├─ Body
+   └─ Lid ← nodes.Lidで取得
+```
+
+```tsx
+const { scene, nodes } = useGLTF('/models/gift_box_handson.glb');
+const lid = nodes.Lid;
+```
+
+今回のLidは、蓋・リボン・結び目など複数のパーツをまとめたGroupです。Lidを動かすと、すべてのパーツが一緒に動きます。
+
+Geometry版のLidで使っていた`lidRef`を削除します。
+
+```tsx
+const lidRef = useRef<THREE.Mesh>(null);
+```
+
+`useFrame`の先頭を変更します。
+
+```tsx
+if (!presentRef.current) return;
+```
+
+Lidの位置を更新している部分を変更します。
+
+```tsx
+lid.position.y = THREE.MathUtils.lerp(
+  lid.position.y,
+  lidTargetY,
+  0.1,
+);
+```
+
+`opened`、`lidTargetY`、`CLOSED_Y`、`OPEN_Y`は変更しません。Presentのアニメーションもそのまま残します。
+
+#### 3. コードの意味
+
+`nodes.Lid`で、GLB内の`Lid`という名前のノードを取得しています。
+
+動かす対象は`lidRef.current`から`lid`へ変わりました。しかし、`opened`から目標位置を決め、`lerp`で現在位置を近づける仕組みは同じです。
+
+#### 4. ブラウザで確認
+
+1. 箱をクリックします。
+2. Lidとリボンが一緒に上へ動くことを確認します。
+3. Presentも従来どおり上へ動くことを確認します。
+4. Bodyが動いていないことを確認します。
+5. もう一度クリックします。
+6. LidとPresentが元の位置へ戻ることを確認します。
+
+これで`03-replace-with-glb`は完成です。
+
+### このSTEPで体験したこと
+
+Geometry版からGLBへ変わったのは、ギフトボックスの見た目です。
+
+```text
+opened
+↓
+目標位置を決める
+↓
+useFrame
+↓
+lerp
+↓
+Lidを動かす
+```
+
+この仕組みはSTEP 01から変わっていません。
+
+**シンプルなGeometryでロジックを作っておけば、そのロジックを残したまま、見た目をGLBモデルへ発展させることができます。**
 
 ---
 

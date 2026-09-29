@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 const CLOSED_Y = 1.65;
@@ -8,18 +9,20 @@ const PRESENT_CLOSED_Y = 0.8;
 const PRESENT_OPEN_Y = 2.2;
 
 function GiftBox() {
+  const { scene, nodes } = useGLTF('/models/gift_box_handson.glb');
+  const lid = nodes.Lid;
+
   const [opened, setOpened] = useState(false);
-  const lidRef = useRef<THREE.Mesh>(null);
   const presentRef = useRef<THREE.Mesh>(null);
 
   useFrame(() => {
-    if (!lidRef.current || !presentRef.current) return;
+    if (!presentRef.current) return;
 
     const lidTargetY = opened ? OPEN_Y : CLOSED_Y;
     const presentTargetY = opened ? PRESENT_OPEN_Y : PRESENT_CLOSED_Y;
 
-    lidRef.current.position.y = THREE.MathUtils.lerp(
-      lidRef.current.position.y,
+    lid.position.y = THREE.MathUtils.lerp(
+      lid.position.y,
       lidTargetY,
       0.1,
     );
@@ -33,11 +36,7 @@ function GiftBox() {
 
   return (
     <group onClick={() => setOpened(!opened)}>
-      {/* Body */}
-      <mesh name="Body" position={[0, 0.75, 0]} castShadow>
-        <boxGeometry args={[2, 1.5, 2]} />
-        <meshStandardMaterial color="#d95763" />
-      </mesh>
+      <primitive object={scene} />
 
       {/* Present */}
       <mesh
@@ -48,17 +47,6 @@ function GiftBox() {
       >
         <sphereGeometry args={[0.45, 32, 32]} />
         <meshStandardMaterial color="#f4c542" />
-      </mesh>
-
-      {/* Lid */}
-      <mesh
-        ref={lidRef}
-        name="Lid"
-        position={[0, CLOSED_Y, 0]}
-        castShadow
-      >
-        <boxGeometry args={[2.2, 0.3, 2.2]} />
-        <meshStandardMaterial color="#b83b4b" />
       </mesh>
     </group>
   );

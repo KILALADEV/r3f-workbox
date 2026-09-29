@@ -1,8 +1,8 @@
-# React Three Fiber ハンズオン：02-add-present
+# React Three Fiber ハンズオン：03-replace-with-glb
 
 React Three Fiber（R3F）を使って、クリックすると開くギフトボックスを作るハンズオン教材です。
 
-このSTEPでは、STEP 01で作った開閉の仕組みを再利用し、箱の中からPresentが出てくるアニメーションを追加します。
+このSTEPでは、Geometryで作ったギフトボックスをGLBモデルへ差し替え、これまでに作った開閉ロジックを適用します。
 
 ## 必要な環境
 
@@ -34,10 +34,10 @@ npm run dev
 - 固定カメラ
 - ライト
 - 地面
-- R3FのGeometryで作ったギフトボックス
+- GLBモデルのギフトボックス
   - Body：箱本体
-  - Lid：箱の蓋
-  - Present：箱の中身
+  - Lid：蓋・リボン・結び目をまとめたGroup
+- R3FのGeometryで作ったPresent
 - クリックによる開閉状態の切り替え
 - LidとPresentのアニメーション
 
@@ -57,7 +57,7 @@ src/
 
 ハンズオンで主に編集するのは、`src/components/GiftScene.tsx`です。
 
-このファイルには、R3Fのシーンと`GiftBox`コンポーネントが書かれています。`GiftBox`の中では、BodyとLidがそれぞれ独立した`mesh`として配置されています。
+このファイルには、R3Fのシーンと`GiftBox`コンポーネントが書かれています。GLBのBodyとLidに、R3FのGeometryで作ったPresentを組み合わせています。
 
 Astro側の設定や`index.astro`は準備済みのため、基本的に変更する必要はありません。
 
