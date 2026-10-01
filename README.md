@@ -71,9 +71,9 @@ Astro側の設定や`index.astro`は準備済みのため、基本的に変更�
 02-add-present
 ↓
 03-replace-with-glb
-↓
-bonus-customize
 ```
+
+ここまでがハンズオン本編です。
 
 1. **01-click-open**  
    クリックをきっかけに箱の状態を変更し、Lidを上方向へアニメーションさせます。
@@ -84,8 +84,10 @@ bonus-customize
 3. **03-replace-with-glb**  
    Geometryで作った箱をGLBモデルへ差し替え、同じ開閉ロジックを適用します。
 
-4. **bonus-customize**  
-   色、アニメーションの速度や移動量、中身などを自由に変更します。
+### BONUS：Customize（任意）
+
+`bonus-customize`は、早く終わった人や時間に余裕がある人向けの自由なカスタマイズです。
+すべてを行う必要はありません。詳しいアイデアとHintは[HANDSON.md](./HANDSON.md)を参照してください。
 
 ## 使用技術
 

@@ -670,6 +670,74 @@ Lidを動かす
 
 ## BONUS：Customize
 
-色、アニメーションの速度や移動量、中身などを自由に変更します。
+ここまでで、ハンズオン本編は完成です！
 
-手順は後ほど追加します。
+BONUSは、早く終わった人や時間に余裕がある人向けの自由なカスタマイズです。
+すべてを試す必要はありません。
+気になるものを選んで、好きな見た目や動きを作ってみましょう。
+
+### 例えば、こんなことができます
+
+- Presentの色を変更する
+- PresentのGeometryを、別の形に変更する
+- `OPEN_Y`や`PRESENT_OPEN_Y`を変更して、LidやPresentの移動量を変える
+- `lerp`の値を変更して、アニメーションの速さを変える
+- LidとPresentで異なる`lerp`の値を使い、動きの違いを試す
+- `<Sparkles>`を追加して、キラキラした演出を加える
+- Presentを、用意されているGLBへ差し替える
+
+数値を変えたら、実際の画面を見ながら好きな動きに調整してみましょう。
+`OPEN_Y`や`PRESENT_OPEN_Y`を大きく変更すると、LidとPresentが貫通する場合があります。
+画面を確認しながら調整してください。
+
+### Hint：Sparklesを追加する
+
+`Sparkles`は、`@react-three/drei`からimportできます。
+
+```tsx
+import { Sparkles, useGLTF } from '@react-three/drei';
+```
+
+`GiftBox`の中など、キラキラを表示したい場所へ追加してみましょう。
+
+```tsx
+<Sparkles
+  count={40}
+  scale={3}
+  size={4}
+  speed={0.4}
+/>
+```
+
+`count`、`scale`、`size`、`speed`の値を自由に変更すると、見た目や動きが変わります。
+
+### Hint：PresentをGLBへ差し替える
+
+差し替え用のモデルは、次の場所に用意されています。
+
+```text
+public/models/logo_depart.glb
+```
+
+原点とサイズは、現在のPresentと差し替えられるように調整済みです。
+
+STEP 03で行った流れを、今度はPresentへ応用してみましょう。
+
+```text
+Geometry
+↓
+useGLTFでGLBを読み込む
+↓
+primitiveで表示する
+```
+
+現在のPresentは`Mesh`を参照しています。
+GLBの`Group`を参照する場合は、refの型も変更します。
+
+```tsx
+const presentRef = useRef<THREE.Group>(null);
+```
+
+STEP 03を振り返りながら、Presentの`sphereGeometry`を`logo_depart.glb`へ差し替えてみてください。
+
+正解はありません。好きな見た目や動きになるように、自由に遊んでみてください！
