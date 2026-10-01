@@ -1,8 +1,8 @@
-# React Three Fiber ハンズオン：03-replace-with-glb
+# React Three Fiber ハンズオン
 
 React Three Fiber（R3F）を使って、クリックすると開くギフトボックスを作るハンズオン教材です。
 
-このSTEPでは、Geometryで作ったギフトボックスをGLBモデルへ差し替え、これまでに作った開閉ロジックを適用します。
+このハンズオンでは、シンプルなGeometryで開閉ロジックを作り、そのロジックを残したままGLBモデルへ見た目を差し替えます。
 
 ## 必要な環境
 
