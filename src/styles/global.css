@@ -1,0 +1,110 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+.scene {
+  width: 100%;
+  height: 100%;
+}
+
+.gift-app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.control-panel {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: min(280px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  overflow-y: auto;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  color: #2b2b2b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.control-panel summary {
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.control-panel section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.control-panel h2 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.control-panel p {
+  margin: 0 0 8px;
+}
+
+.control-panel .hint {
+  color: #666;
+  font-size: 12px;
+}
+
+.control-panel label {
+  display: grid;
+  grid-template-columns: 16px 1fr 36px;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-panel input[type='range'] {
+  width: 100%;
+  accent-color: #d6264f;
+}
+
+.control-panel output {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.control-panel button {
+  padding: 6px 12px;
+  border: 1px solid #d6264f;
+  border-radius: 6px;
+  background: #fff;
+  color: #d6264f;
+  font: inherit;
+  cursor: pointer;
+}
+
+.control-panel button:hover {
+  background: #d6264f;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .control-panel {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
+    max-height: 50%;
+  }
+}
